@@ -61,7 +61,12 @@ mod tests {
             executable: false,
         };
 
-        let deser = try_deserialize_token_account(&info).unwrap();
+        // blanket impl for ref
+        let ref_deser = try_deserialize_token_account(&info).unwrap();
+        assert_eq!(ref_deser, acc);
+
+        // consume info
+        let deser = try_deserialize_token_account(info).unwrap();
         assert_eq!(deser, acc);
     }
 }

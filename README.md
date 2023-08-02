@@ -42,7 +42,7 @@ use solana_readonly_account::ReadonlyAccount;
 use spl_token_2022::state::Account;
 
 pub fn try_deserialize_token_account<A: ReadonlyAccount>(
-    acc: &A,
+    acc: A,
 ) -> Result<Account, ProgramError> {
     Account::unpack(&acc.data())
 }

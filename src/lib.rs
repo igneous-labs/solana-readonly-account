@@ -24,6 +24,39 @@ pub trait ReadonlyAccount {
     fn rent_epoch(&self) -> Epoch;
 }
 
+impl<'a, T> ReadonlyAccount for &'a T
+where
+    T: ReadonlyAccount,
+{
+    type SliceDeref<'s> = T::SliceDeref<'s>
+    where
+        Self: 's;
+
+    type DataDeref<'d> = T::DataDeref<'d>
+    where
+        Self: 'd;
+
+    fn lamports(&self) -> u64 {
+        (*self).lamports()
+    }
+
+    fn data(&self) -> Self::DataDeref<'_> {
+        (*self).data()
+    }
+
+    fn owner(&self) -> &Pubkey {
+        (*self).owner()
+    }
+
+    fn executable(&self) -> bool {
+        (*self).executable()
+    }
+
+    fn rent_epoch(&self) -> Epoch {
+        (*self).rent_epoch()
+    }
+}
+
 #[cfg(test)]
 pub mod test_utils {
     use solana_program::{
@@ -34,7 +67,7 @@ pub mod test_utils {
     use super::*;
 
     pub fn try_deserialize_token_account<A: ReadonlyAccount>(
-        acc: &A,
+        acc: A,
     ) -> Result<Account, ProgramError> {
         Account::unpack(&acc.data())
     }
