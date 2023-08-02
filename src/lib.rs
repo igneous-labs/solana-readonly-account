@@ -57,6 +57,19 @@ where
     }
 }
 
+pub trait KeyedAccount {
+    fn key(&self) -> &Pubkey;
+}
+
+impl<'a, T> KeyedAccount for &'a T
+where
+    T: KeyedAccount,
+{
+    fn key(&self) -> &Pubkey {
+        (*self).key()
+    }
+}
+
 #[cfg(test)]
 pub mod test_utils {
     use solana_program::{

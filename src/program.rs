@@ -1,7 +1,7 @@
 use core::cell::Ref;
 use solana_program::{account_info::AccountInfo, pubkey::Pubkey, stake_history::Epoch};
 
-use crate::ReadonlyAccount;
+use crate::{KeyedAccount, ReadonlyAccount};
 
 impl ReadonlyAccount for AccountInfo<'_> {
     type SliceDeref<'s> = &'s mut [u8] where Self: 's;
@@ -12,6 +12,9 @@ impl ReadonlyAccount for AccountInfo<'_> {
     }
 
     /// panics if data is mutably borrowed
+    ///
+    /// Take note of lifetime of returned Ref;
+    /// data cannot be borrow_mut() while it's not dropped
     fn data(&self) -> Self::DataDeref<'_> {
         self.data.borrow()
     }
@@ -26,6 +29,12 @@ impl ReadonlyAccount for AccountInfo<'_> {
 
     fn rent_epoch(&self) -> Epoch {
         self.rent_epoch
+    }
+}
+
+impl KeyedAccount for AccountInfo<'_> {
+    fn key(&self) -> &Pubkey {
+        self.key
     }
 }
 

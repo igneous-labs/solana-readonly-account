@@ -4,11 +4,17 @@ use derive_more::{AsMut, AsRef, Deref, DerefMut, From, Into};
 use solana_program::{pubkey::Pubkey, stake_history::Epoch};
 use solana_sdk::account::Account;
 
-use crate::ReadonlyAccount;
+use crate::{KeyedAccount, ReadonlyAccount};
 
 /// Newtype owning reference to account.data in order to work with trait
 #[derive(Clone, Copy, Debug, Deref, DerefMut, AsRef, AsMut, From, Into)]
 pub struct AccountDataRef<'a>(pub &'a [u8]);
+
+#[derive(Clone, Debug, Default, PartialEq, Eq)]
+pub struct KeyedReadonlyAccount {
+    pub key: Pubkey,
+    pub account: Account,
+}
 
 impl ReadonlyAccount for Account {
     type SliceDeref<'s> = &'s [u8] where Self: 's;
@@ -32,6 +38,37 @@ impl ReadonlyAccount for Account {
 
     fn rent_epoch(&self) -> Epoch {
         self.rent_epoch
+    }
+}
+
+impl ReadonlyAccount for KeyedReadonlyAccount {
+    type SliceDeref<'s> = <solana_sdk::account::Account as ReadonlyAccount>::SliceDeref<'s>;
+    type DataDeref<'d> = <solana_sdk::account::Account as ReadonlyAccount>::DataDeref<'d>;
+
+    fn lamports(&self) -> u64 {
+        self.account.lamports()
+    }
+
+    fn data(&self) -> Self::DataDeref<'_> {
+        self.account.data()
+    }
+
+    fn owner(&self) -> &Pubkey {
+        self.account.owner()
+    }
+
+    fn executable(&self) -> bool {
+        self.account.executable()
+    }
+
+    fn rent_epoch(&self) -> Epoch {
+        self.account.rent_epoch()
+    }
+}
+
+impl KeyedAccount for KeyedReadonlyAccount {
+    fn key(&self) -> &Pubkey {
+        &self.key
     }
 }
 

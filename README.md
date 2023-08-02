@@ -9,7 +9,7 @@ Reimplementation of [ReadableAccount](https://docs.rs/solana-sdk/latest/solana_s
 
 ## Library
 
-This crate defines the `ReadonlyAccount` trait:
+### ReadonlyAccount trait
 
 ```rust ignore
 pub trait ReadonlyAccount {
@@ -28,7 +28,24 @@ pub trait ReadonlyAccount {
 }
 ```
 
-And implements it for [solana_program::AccountInfo](https://docs.rs/solana-program/latest/solana_program/account_info/struct.AccountInfo.html) and [solana_sdk::Account](https://docs.rs/solana-sdk/latest/solana_sdk/account/struct.Account.html)
+`ReadonlyAccount` is implemented for [solana_program::AccountInfo](https://docs.rs/solana-program/latest/solana_program/account_info/struct.AccountInfo.html), [solana_sdk::Account](https://docs.rs/solana-sdk/latest/solana_sdk/account/struct.Account.html), and the newly defined `KeyedReadonlyAccount` struct:
+
+```rust ignore
+pub struct KeyedReadonlyAccount {
+    pub key: Pubkey,
+    pub account: solana_sdk::account::Account,
+}
+```
+
+### KeyedAccount trait
+
+```rust ignore
+pub trait KeyedAccount {
+    fn key(&self) -> &Pubkey;
+}
+```
+
+`KeyedAccount` is implemented for `AccountInfo` and `KeyedReadonlyAccount`
 
 ## Usage
 
