@@ -1,63 +1,14 @@
+#![doc = include_str!("../README.md")]
+
 use core::ops::Deref;
 use solana_program::{pubkey::Pubkey, stake_history::Epoch};
 
 pub mod program;
 pub mod sdk;
 
-/// Until [SlicePattern](https://doc.rust-lang.org/core/slice/trait.SlicePattern.html) is merged into rust stable
-/// We need to do this double Deref hack for data because
-/// Rc<RefCell<&mut [u8]>>::borrow() returns Ref<&mut [u8]>
-/// and there's no common trait in stable with method `.as_slice()` that both &mut [u8] and &[u8] impls
-/// (that would be SlicePattern)
-pub trait ReadonlyAccount {
-    type SliceDeref<'s>: Deref<Target = [u8]>
-    where
-        Self: 's;
-    type DataDeref<'d>: Deref<Target = Self::SliceDeref<'d>>
-    where
-        Self: 'd;
-
-    fn lamports(&self) -> u64;
-    fn data(&self) -> Self::DataDeref<'_>;
-    fn owner(&self) -> &Pubkey;
-    fn executable(&self) -> bool;
-    fn rent_epoch(&self) -> Epoch;
-}
-
-impl<'a, T> ReadonlyAccount for &'a T
-where
-    T: ReadonlyAccount,
-{
-    type SliceDeref<'s> = T::SliceDeref<'s>
-    where
-        Self: 's;
-
-    type DataDeref<'d> = T::DataDeref<'d>
-    where
-        Self: 'd;
-
-    fn lamports(&self) -> u64 {
-        (*self).lamports()
-    }
-
-    fn data(&self) -> Self::DataDeref<'_> {
-        (*self).data()
-    }
-
-    fn owner(&self) -> &Pubkey {
-        (*self).owner()
-    }
-
-    fn executable(&self) -> bool {
-        (*self).executable()
-    }
-
-    fn rent_epoch(&self) -> Epoch {
-        (*self).rent_epoch()
-    }
-}
-
+/// A readonly account that you can read the pubkey of
 pub trait KeyedAccount {
+    /// Returns the pubkey of this account
     fn key(&self) -> &Pubkey;
 }
 
@@ -70,6 +21,102 @@ where
     }
 }
 
+/// A readonly account that you can read the lamports of
+pub trait ReadonlyAccountLamports {
+    /// Returns the lamports of this account
+    fn lamports(&self) -> u64;
+}
+
+impl<'a, T> ReadonlyAccountLamports for &'a T
+where
+    T: ReadonlyAccountLamports,
+{
+    fn lamports(&self) -> u64 {
+        (*self).lamports()
+    }
+}
+
+/// A readonly account that you can read the data of
+///
+/// Until [SlicePattern](https://doc.rust-lang.org/core/slice/trait.SlicePattern.html) is merged into rust stable
+/// We need to do this double Deref hack for data because
+/// Rc<RefCell<&mut [u8]>>::borrow() returns Ref<&mut [u8]>
+/// and there's no common trait in stable with method `.as_slice()` that both &mut [u8] and &[u8] impls
+/// (that would be SlicePattern)
+pub trait ReadonlyAccountData {
+    type SliceDeref<'s>: Deref<Target = [u8]>
+    where
+        Self: 's;
+    type DataDeref<'d>: Deref<Target = Self::SliceDeref<'d>>
+    where
+        Self: 'd;
+
+    /// Returns the data buffer of this account that can be derefed twice into a byte-slice
+    fn data(&self) -> Self::DataDeref<'_>;
+}
+
+impl<'a, T> ReadonlyAccountData for &'a T
+where
+    T: ReadonlyAccountData,
+{
+    type SliceDeref<'s> = T::SliceDeref<'s>
+    where
+        Self: 's;
+
+    type DataDeref<'d> = T::DataDeref<'d>
+    where
+        Self: 'd;
+
+    fn data(&self) -> Self::DataDeref<'_> {
+        (*self).data()
+    }
+}
+
+/// A readonly account that you can read the owner program of
+pub trait ReadonlyAccountOwner {
+    /// Returns the pubkey of the program owning this account
+    fn owner(&self) -> &Pubkey;
+}
+
+impl<'a, T> ReadonlyAccountOwner for &'a T
+where
+    T: ReadonlyAccountOwner,
+{
+    fn owner(&self) -> &Pubkey {
+        (*self).owner()
+    }
+}
+
+/// A readonly account that you can read whether it's executable or not
+pub trait ReadonlyAccountIsExecutable {
+    /// Returns true if this is an executable account, false otherwise
+    fn executable(&self) -> bool;
+}
+
+impl<'a, T> ReadonlyAccountIsExecutable for &'a T
+where
+    T: ReadonlyAccountIsExecutable,
+{
+    fn executable(&self) -> bool {
+        (*self).executable()
+    }
+}
+
+/// A readonly account that you can read the rent epoch of
+pub trait ReadonlyAccountRentEpoch {
+    /// Returns the rent epoch of this account
+    fn rent_epoch(&self) -> Epoch;
+}
+
+impl<'a, T> ReadonlyAccountRentEpoch for &'a T
+where
+    T: ReadonlyAccountRentEpoch,
+{
+    fn rent_epoch(&self) -> Epoch {
+        (*self).rent_epoch()
+    }
+}
+
 #[cfg(test)]
 pub mod test_utils {
     use solana_program::{
@@ -79,7 +126,16 @@ pub mod test_utils {
 
     use super::*;
 
-    pub fn try_deserialize_token_account<A: ReadonlyAccount>(
+    /// This fn only uses data, but we just add the other traits to make sure
+    /// we've implemented them
+    pub fn try_deserialize_token_account<
+        A: KeyedAccount
+            + ReadonlyAccountLamports
+            + ReadonlyAccountData
+            + ReadonlyAccountOwner
+            + ReadonlyAccountIsExecutable
+            + ReadonlyAccountRentEpoch,
+    >(
         acc: A,
     ) -> Result<Account, ProgramError> {
         Account::unpack(&acc.data())

@@ -1,15 +1,26 @@
 use core::cell::Ref;
 use solana_program::{account_info::AccountInfo, pubkey::Pubkey, stake_history::Epoch};
 
-use crate::{KeyedAccount, ReadonlyAccount};
+use crate::{
+    KeyedAccount, ReadonlyAccountData, ReadonlyAccountIsExecutable, ReadonlyAccountLamports,
+    ReadonlyAccountOwner, ReadonlyAccountRentEpoch,
+};
 
-impl ReadonlyAccount for AccountInfo<'_> {
-    type SliceDeref<'s> = &'s mut [u8] where Self: 's;
-    type DataDeref<'d> = Ref<'d, Self::SliceDeref<'d>> where Self: 'd;
+impl KeyedAccount for AccountInfo<'_> {
+    fn key(&self) -> &Pubkey {
+        self.key
+    }
+}
 
+impl ReadonlyAccountLamports for AccountInfo<'_> {
     fn lamports(&self) -> u64 {
         self.lamports()
     }
+}
+
+impl ReadonlyAccountData for AccountInfo<'_> {
+    type SliceDeref<'s> = &'s mut [u8] where Self: 's;
+    type DataDeref<'d> = Ref<'d, Self::SliceDeref<'d>> where Self: 'd;
 
     /// panics if data is mutably borrowed
     ///
@@ -18,23 +29,23 @@ impl ReadonlyAccount for AccountInfo<'_> {
     fn data(&self) -> Self::DataDeref<'_> {
         self.data.borrow()
     }
+}
 
+impl ReadonlyAccountOwner for AccountInfo<'_> {
     fn owner(&self) -> &Pubkey {
         self.owner
     }
+}
 
+impl ReadonlyAccountIsExecutable for AccountInfo<'_> {
     fn executable(&self) -> bool {
         self.executable
     }
-
-    fn rent_epoch(&self) -> Epoch {
-        self.rent_epoch
-    }
 }
 
-impl KeyedAccount for AccountInfo<'_> {
-    fn key(&self) -> &Pubkey {
-        self.key
+impl ReadonlyAccountRentEpoch for AccountInfo<'_> {
+    fn rent_epoch(&self) -> Epoch {
+        self.rent_epoch
     }
 }
 
