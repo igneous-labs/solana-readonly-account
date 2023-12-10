@@ -13,7 +13,7 @@ use crate::{
 #[derive(Clone, Copy, Debug, Deref, DerefMut, AsRef, AsMut, From, Into)]
 pub struct AccountDataRef<'a>(pub &'a [u8]);
 
-/// solana_sdk::account::Account with its pubkey
+/// `solana_sdk::account::Account` with its pubkey
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
 pub struct KeyedReadonlyAccount {
     pub key: Pubkey,

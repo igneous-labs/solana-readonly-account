@@ -12,7 +12,7 @@ pub trait KeyedAccount {
     fn key(&self) -> &Pubkey;
 }
 
-impl<'a, T> KeyedAccount for &'a T
+impl<T> KeyedAccount for &T
 where
     T: KeyedAccount + ?Sized,
 {
@@ -27,7 +27,7 @@ pub trait ReadonlyAccountLamports {
     fn lamports(&self) -> u64;
 }
 
-impl<'a, T> ReadonlyAccountLamports for &'a T
+impl<T> ReadonlyAccountLamports for &T
 where
     T: ReadonlyAccountLamports + ?Sized,
 {
@@ -55,7 +55,7 @@ pub trait ReadonlyAccountData {
     fn data(&self) -> Self::DataDeref<'_>;
 }
 
-impl<'a, T> ReadonlyAccountData for &'a T
+impl<T> ReadonlyAccountData for &T
 where
     T: ReadonlyAccountData + ?Sized,
 {
@@ -78,7 +78,7 @@ pub trait ReadonlyAccountOwner {
     fn owner(&self) -> &Pubkey;
 }
 
-impl<'a, T> ReadonlyAccountOwner for &'a T
+impl<T> ReadonlyAccountOwner for &T
 where
     T: ReadonlyAccountOwner + ?Sized,
 {
@@ -93,7 +93,7 @@ pub trait ReadonlyAccountIsExecutable {
     fn executable(&self) -> bool;
 }
 
-impl<'a, T> ReadonlyAccountIsExecutable for &'a T
+impl<T> ReadonlyAccountIsExecutable for &T
 where
     T: ReadonlyAccountIsExecutable + ?Sized,
 {
@@ -108,7 +108,7 @@ pub trait ReadonlyAccountRentEpoch {
     fn rent_epoch(&self) -> Epoch;
 }
 
-impl<'a, T> ReadonlyAccountRentEpoch for &'a T
+impl<T> ReadonlyAccountRentEpoch for &T
 where
     T: ReadonlyAccountRentEpoch + ?Sized,
 {
