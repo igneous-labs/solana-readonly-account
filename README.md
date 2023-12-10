@@ -35,6 +35,7 @@ pub trait KeyedAccount {
 
 - [solana_program::AccountInfo](https://docs.rs/solana-program/latest/solana_program/account_info/struct.AccountInfo.html)
 - `KeyedReadonlyAccount`
+- blanket for references
 
 ### ReadonlyAccountLamports trait
 
@@ -50,6 +51,7 @@ pub trait ReadonlyAccountLamports {
 - [solana_program::AccountInfo](https://docs.rs/solana-program/latest/solana_program/account_info/struct.AccountInfo.html)
 - [solana_sdk::Account](https://docs.rs/solana-sdk/latest/solana_sdk/account/struct.Account.html)
 - `KeyedReadonlyAccount`
+- blanket for references
 
 ### ReadonlyAccountData trait
 
@@ -72,6 +74,7 @@ pub trait ReadonlyAccountData {
 - [solana_program::AccountInfo](https://docs.rs/solana-program/latest/solana_program/account_info/struct.AccountInfo.html)
 - [solana_sdk::Account](https://docs.rs/solana-sdk/latest/solana_sdk/account/struct.Account.html)
 - `KeyedReadonlyAccount`
+- blanket for references
 
 ### ReadonlyAccountOwner trait
 
@@ -87,6 +90,7 @@ pub trait ReadonlyAccountOwner {
 - [solana_program::AccountInfo](https://docs.rs/solana-program/latest/solana_program/account_info/struct.AccountInfo.html)
 - [solana_sdk::Account](https://docs.rs/solana-sdk/latest/solana_sdk/account/struct.Account.html)
 - `KeyedReadonlyAccount`
+- blanket for references
 
 ### ReadonlyAccountIsExecutable trait
 
@@ -102,6 +106,7 @@ pub trait ReadonlyAccountIsExecutable {
 - [solana_program::AccountInfo](https://docs.rs/solana-program/latest/solana_program/account_info/struct.AccountInfo.html)
 - [solana_sdk::Account](https://docs.rs/solana-sdk/latest/solana_sdk/account/struct.Account.html)
 - `KeyedReadonlyAccount`
+- blanket for references
 
 ### ReadonlyAccountRentEpoch trait
 
@@ -117,6 +122,7 @@ pub trait ReadonlyAccountRentEpoch {
 - [solana_program::AccountInfo](https://docs.rs/solana-program/latest/solana_program/account_info/struct.AccountInfo.html)
 - [solana_sdk::Account](https://docs.rs/solana-sdk/latest/solana_sdk/account/struct.Account.html)
 - `KeyedReadonlyAccount`
+- blanket for references
 
 ## Usage
 
