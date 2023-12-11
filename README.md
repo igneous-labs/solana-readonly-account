@@ -17,7 +17,7 @@ Since [solana_sdk::Account](https://docs.rs/solana-sdk/latest/solana_sdk/account
 
 ```rust ignore
 pub struct KeyedAccount {
-    pub key: Pubkey,
+    pub pubkey: Pubkey,
     pub account: Account,
 }
 ```
