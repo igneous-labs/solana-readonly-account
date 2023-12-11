@@ -7,7 +7,7 @@ license = "MIT OR Apache-2.0"
 repository = "https://github.com/igneous-labs/solana-readonly-account.git"
 readme = "README.md"
 keywords = ["sanctum", "solana", "account", "generics"]
-categories = ["Rust patterns"]
+categories = ["rust-patterns"]
 
 include = ["/src", "/README.md"]
 
