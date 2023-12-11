@@ -1,12 +1,10 @@
-#![cfg(feature = "solana-sdk")]
-
 use derive_more::{AsMut, AsRef, Deref, DerefMut, From, Into};
 use solana_program::{pubkey::Pubkey, stake_history::Epoch};
 use solana_sdk::account::Account;
 
 use crate::{
-    KeyedAccount, ReadonlyAccountData, ReadonlyAccountIsExecutable, ReadonlyAccountLamports,
-    ReadonlyAccountOwner, ReadonlyAccountRentEpoch,
+    ReadonlyAccountData, ReadonlyAccountIsExecutable, ReadonlyAccountLamports,
+    ReadonlyAccountOwner, ReadonlyAccountPubkey, ReadonlyAccountRentEpoch,
 };
 
 /// Newtype owning reference to account.data in order to work with trait
@@ -15,14 +13,14 @@ pub struct AccountDataRef<'a>(pub &'a [u8]);
 
 /// `solana_sdk::account::Account` with its pubkey
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
-pub struct KeyedReadonlyAccount {
-    pub key: Pubkey,
+pub struct KeyedAccount {
+    pub pubkey: Pubkey,
     pub account: Account,
 }
 
-impl KeyedAccount for KeyedReadonlyAccount {
-    fn key(&self) -> &Pubkey {
-        &self.key
+impl ReadonlyAccountPubkey for KeyedAccount {
+    fn pubkey(&self) -> &Pubkey {
+        &self.pubkey
     }
 }
 
@@ -32,7 +30,7 @@ impl ReadonlyAccountLamports for Account {
     }
 }
 
-impl ReadonlyAccountLamports for KeyedReadonlyAccount {
+impl ReadonlyAccountLamports for KeyedAccount {
     fn lamports(&self) -> u64 {
         self.account.lamports
     }
@@ -47,7 +45,7 @@ impl ReadonlyAccountData for Account {
     }
 }
 
-impl ReadonlyAccountData for KeyedReadonlyAccount {
+impl ReadonlyAccountData for KeyedAccount {
     type SliceDeref<'s> = <solana_sdk::account::Account as ReadonlyAccountData>::SliceDeref<'s>;
     type DataDeref<'d> = <solana_sdk::account::Account as ReadonlyAccountData>::DataDeref<'d>;
 
@@ -62,7 +60,7 @@ impl ReadonlyAccountOwner for Account {
     }
 }
 
-impl ReadonlyAccountOwner for KeyedReadonlyAccount {
+impl ReadonlyAccountOwner for KeyedAccount {
     fn owner(&self) -> &Pubkey {
         self.account.owner()
     }
@@ -74,7 +72,7 @@ impl ReadonlyAccountIsExecutable for Account {
     }
 }
 
-impl ReadonlyAccountIsExecutable for KeyedReadonlyAccount {
+impl ReadonlyAccountIsExecutable for KeyedAccount {
     fn executable(&self) -> bool {
         self.account.executable()
     }
@@ -86,7 +84,7 @@ impl ReadonlyAccountRentEpoch for Account {
     }
 }
 
-impl ReadonlyAccountRentEpoch for KeyedReadonlyAccount {
+impl ReadonlyAccountRentEpoch for KeyedAccount {
     fn rent_epoch(&self) -> Epoch {
         self.account.rent_epoch()
     }
@@ -108,8 +106,8 @@ mod tests {
         let mut data = vec![0u8; Account::LEN];
         Account::pack(acc, &mut data).unwrap();
 
-        let keyed_account = KeyedReadonlyAccount {
-            key: Pubkey::default(),
+        let keyed_account = KeyedAccount {
+            pubkey: Pubkey::default(),
             account: solana_sdk::account::Account {
                 lamports: 0,
                 owner: Pubkey::default(),

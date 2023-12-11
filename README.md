@@ -13,28 +13,28 @@ The 6 main account fields (key, lamports, data, owner, is_executable, rent_epoch
 
 For example, say you had a function that only requires the account's owner and this is a known static pubkey. Instead of having to fetch the full `Account` just to read its already-known owner field, or creating a dummy `Account`, you can simply define a newtype that only needs to implement `ReadonlyAccountOwner`, while still maintaining the ability to use this function with on-chain `AccountInfo`s.
 
-Since [solana_sdk::Account](https://docs.rs/solana-sdk/latest/solana_sdk/account/struct.Account.html) doesn't have its pubkey field, the following [`KeyedReadonlyAccount`](crate::sdk::KeyedReadonlyAccount) struct is defined in `crate::sdk` for off-chain use cases:
+Since [solana_sdk::Account](https://docs.rs/solana-sdk/latest/solana_sdk/account/struct.Account.html) doesn't have its pubkey field, the following [`KeyedAccount`](crate::sdk::KeyedAccount) struct is defined in `crate::sdk` for off-chain use cases:
 
 ```rust ignore
-pub struct KeyedReadonlyAccount {
+pub struct KeyedAccount {
     pub key: Pubkey,
     pub account: Account,
 }
 ```
 
-### KeyedAccount trait
+### ReadonlyAccountPubkey trait
 
 ```rust ignore
-pub trait KeyedAccount {
+pub trait ReadonlyAccountPubkey {
     /// Returns the pubkey of this account
-    fn key(&self) -> &Pubkey;
+    fn pubkey(&self) -> &Pubkey;
 }
 ```
 
 **impl for:**
 
 - [`solana_program::AccountInfo`](https://docs.rs/solana-program/latest/solana_program/account_info/struct.AccountInfo.html)
-- [`KeyedReadonlyAccount`](crate::sdk::KeyedReadonlyAccount)
+- [`KeyedAccount`](crate::sdk::KeyedAccount)
 - blanket for references
 
 ### ReadonlyAccountLamports trait
@@ -50,7 +50,7 @@ pub trait ReadonlyAccountLamports {
 
 - [`solana_program::AccountInfo`](https://docs.rs/solana-program/latest/solana_program/account_info/struct.AccountInfo.html)
 - [`solana_sdk::Account`](https://docs.rs/solana-sdk/latest/solana_sdk/account/struct.Account.html)
-- [`KeyedReadonlyAccount`](crate::sdk::KeyedReadonlyAccount)
+- [`KeyedAccount`](crate::sdk::KeyedAccount)
 - blanket for references
 
 ### ReadonlyAccountData trait
@@ -73,7 +73,7 @@ pub trait ReadonlyAccountData {
 
 - [`solana_program::AccountInfo`](https://docs.rs/solana-program/latest/solana_program/account_info/struct.AccountInfo.html)
 - [`solana_sdk::Account`](https://docs.rs/solana-sdk/latest/solana_sdk/account/struct.Account.html)
-- [`KeyedReadonlyAccount`](crate::sdk::KeyedReadonlyAccount)
+- [`KeyedAccount`](crate::sdk::KeyedAccount)
 - blanket for references
 
 ### ReadonlyAccountOwner trait
@@ -89,7 +89,7 @@ pub trait ReadonlyAccountOwner {
 
 - [`solana_program::AccountInfo`](https://docs.rs/solana-program/latest/solana_program/account_info/struct.AccountInfo.html)
 - [`solana_sdk::Account`](https://docs.rs/solana-sdk/latest/solana_sdk/account/struct.Account.html)
-- [`KeyedReadonlyAccount`](crate::sdk::KeyedReadonlyAccount)
+- [`KeyedAccount`](crate::sdk::KeyedAccount)
 - blanket for references
 
 ### ReadonlyAccountIsExecutable trait
@@ -105,7 +105,7 @@ pub trait ReadonlyAccountIsExecutable {
 
 - [`solana_program::AccountInfo`](https://docs.rs/solana-program/latest/solana_program/account_info/struct.AccountInfo.html)
 - [`solana_sdk::Account`](https://docs.rs/solana-sdk/latest/solana_sdk/account/struct.Account.html)
-- [`KeyedReadonlyAccount`](crate::sdk::KeyedReadonlyAccount)
+- [`KeyedAccount`](crate::sdk::KeyedAccount)
 - blanket for references
 
 ### ReadonlyAccountRentEpoch trait
@@ -121,7 +121,7 @@ pub trait ReadonlyAccountRentEpoch {
 
 - [`solana_program::AccountInfo`](https://docs.rs/solana-program/latest/solana_program/account_info/struct.AccountInfo.html)
 - [`solana_sdk::Account`](https://docs.rs/solana-sdk/latest/solana_sdk/account/struct.Account.html)
-- [`KeyedReadonlyAccount`](crate::sdk::KeyedReadonlyAccount)
+- [`KeyedAccount`](crate::sdk::KeyedAccount)
 - blanket for references
 
 ## Usage
@@ -142,7 +142,9 @@ pub fn try_deserialize_token_account<A: ReadonlyAccountData>(
 }
 ```
 
-By default, this crate only has the traits implemented for `AccountInfo` and is only usable in an on-chain context. To use it in an off-chain context, enable the `solana-sdk` feature, which will implement them for `Account`
+By default, this crate only has the traits implemented for `AccountInfo` and is only usable in an on-chain context. To use it in an off-chain context, enable the `solana-sdk` feature, which will implement them for `Account`.
+
+Do not enable the feature in an on-chain program crate, or `cargo-build-sbf` will fail.
 
 ## Testing
 

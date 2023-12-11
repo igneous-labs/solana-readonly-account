@@ -1,10 +1,21 @@
 [package]
 name = "solana-readonly-account"
+description = "Readonly solana account field getter traits that work for both on-chain AccountInfos and off-chain Accounts"
 version = "1.0.0"
 edition = "2021"
 
+include = ["/src", "/README.md"]
+
+[package.metadata.docs.rs]
+all-features = true
+rustdoc-args = ["--cfg", "docsrs"]
+
+[features]
+default = []
+solana-sdk = ["dep:solana-sdk", "dep:derive_more"]
+
 [dependencies]
-derive_more = { version = "^0.99", default-features = false, features = ["deref", "deref_mut", "as_ref", "as_mut", "from", "into"] }
+derive_more = { version = "^0.99", optional = true, default-features = false, features = ["deref", "deref_mut", "as_ref", "as_mut", "from", "into"] }
 solana-program ="^1"
 solana-sdk = { version = "^1", optional = true }
 

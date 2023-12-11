@@ -2,12 +2,12 @@ use core::cell::Ref;
 use solana_program::{account_info::AccountInfo, pubkey::Pubkey, stake_history::Epoch};
 
 use crate::{
-    KeyedAccount, ReadonlyAccountData, ReadonlyAccountIsExecutable, ReadonlyAccountLamports,
-    ReadonlyAccountOwner, ReadonlyAccountRentEpoch,
+    ReadonlyAccountData, ReadonlyAccountIsExecutable, ReadonlyAccountLamports,
+    ReadonlyAccountOwner, ReadonlyAccountPubkey, ReadonlyAccountRentEpoch,
 };
 
-impl KeyedAccount for AccountInfo<'_> {
-    fn key(&self) -> &Pubkey {
+impl ReadonlyAccountPubkey for AccountInfo<'_> {
+    fn pubkey(&self) -> &Pubkey {
         self.key
     }
 }

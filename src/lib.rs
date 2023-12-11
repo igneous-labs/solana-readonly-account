@@ -1,23 +1,27 @@
 #![doc = include_str!("../README.md")]
+#![cfg_attr(docsrs, feature(doc_cfg))]
 
 use core::ops::Deref;
 use solana_program::{pubkey::Pubkey, stake_history::Epoch};
 
 pub mod program;
+
+#[cfg(feature = "solana-sdk")]
+#[cfg_attr(docsrs, doc(cfg(feature = "solana-sdk")))]
 pub mod sdk;
 
 /// A readonly account that you can read the pubkey of
-pub trait KeyedAccount {
+pub trait ReadonlyAccountPubkey {
     /// Returns the pubkey of this account
-    fn key(&self) -> &Pubkey;
+    fn pubkey(&self) -> &Pubkey;
 }
 
-impl<T> KeyedAccount for &T
+impl<T> ReadonlyAccountPubkey for &T
 where
-    T: KeyedAccount + ?Sized,
+    T: ReadonlyAccountPubkey + ?Sized,
 {
-    fn key(&self) -> &Pubkey {
-        (*self).key()
+    fn pubkey(&self) -> &Pubkey {
+        (*self).pubkey()
     }
 }
 
@@ -129,7 +133,7 @@ pub mod test_utils {
     /// This fn only uses data, but we just add the other traits to make sure
     /// we've implemented them
     pub fn try_deserialize_token_account<
-        A: KeyedAccount
+        A: ReadonlyAccountPubkey
             + ReadonlyAccountLamports
             + ReadonlyAccountData
             + ReadonlyAccountOwner
