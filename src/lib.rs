@@ -4,6 +4,8 @@
 use core::ops::Deref;
 use solana_program::{pubkey::Pubkey, stake_history::Epoch};
 
+pub mod keyed;
+
 pub mod program;
 
 #[cfg(feature = "solana-sdk")]

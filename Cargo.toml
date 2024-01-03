@@ -1,7 +1,7 @@
 [package]
 name = "solana-readonly-account"
 description = "Readonly solana account field getter traits that work for both on-chain AccountInfos and off-chain Accounts"
-version = "1.0.0"
+version = "1.1.0"
 edition = "2021"
 license = "MIT OR Apache-2.0"
 repository = "https://github.com/igneous-labs/solana-readonly-account.git"

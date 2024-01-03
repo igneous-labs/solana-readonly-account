@@ -13,14 +13,16 @@ The 6 main account fields (key, lamports, data, owner, is_executable, rent_epoch
 
 For example, say you had a function that only requires the account's owner and this is a known static pubkey. Instead of having to fetch the full `Account` just to read its already-known owner field, or creating a dummy `Account`, you can simply define a newtype that only needs to implement `ReadonlyAccountOwner`, while still maintaining the ability to use this function with on-chain `AccountInfo`s.
 
-Since [solana_sdk::Account](https://docs.rs/solana-sdk/latest/solana_sdk/account/struct.Account.html) doesn't have its pubkey field, the following [`KeyedAccount`](crate::sdk::KeyedAccount) struct is defined in `crate::sdk` for off-chain use cases:
+Since [solana_sdk::Account](https://docs.rs/solana-sdk/latest/solana_sdk/account/struct.Account.html) doesn't have its pubkey field, the following [`Keyed`](crate::keyed::Keyed) struct is defined in `crate::sdk` for off-chain use cases:
 
 ```rust ignore
-pub struct KeyedAccount {
+pub struct Keyed<T> {
     pub pubkey: Pubkey,
-    pub account: Account,
+    pub account: T,
 }
 ```
+
+The type [`KeyedAccount`](crate::sdk::KeyedAccount) is an alias for `Keyed<solana_sdk::account::Account>`.
 
 ### ReadonlyAccountPubkey trait
 
@@ -34,7 +36,7 @@ pub trait ReadonlyAccountPubkey {
 **impl for:**
 
 - [`solana_program::AccountInfo`](https://docs.rs/solana-program/latest/solana_program/account_info/struct.AccountInfo.html)
-- [`KeyedAccount`](crate::sdk::KeyedAccount)
+- [`Keyed`](crate::keyed::Keyed)
 - blanket for references
 
 ### ReadonlyAccountLamports trait
@@ -50,7 +52,7 @@ pub trait ReadonlyAccountLamports {
 
 - [`solana_program::AccountInfo`](https://docs.rs/solana-program/latest/solana_program/account_info/struct.AccountInfo.html)
 - [`solana_sdk::Account`](https://docs.rs/solana-sdk/latest/solana_sdk/account/struct.Account.html)
-- [`KeyedAccount`](crate::sdk::KeyedAccount)
+- blanket for [`Keyed`](crate::keyed::Keyed)
 - blanket for references
 
 ### ReadonlyAccountData trait
@@ -73,7 +75,7 @@ pub trait ReadonlyAccountData {
 
 - [`solana_program::AccountInfo`](https://docs.rs/solana-program/latest/solana_program/account_info/struct.AccountInfo.html)
 - [`solana_sdk::Account`](https://docs.rs/solana-sdk/latest/solana_sdk/account/struct.Account.html)
-- [`KeyedAccount`](crate::sdk::KeyedAccount)
+- blanket for [`Keyed`](crate::keyed::Keyed)
 - blanket for references
 
 ### ReadonlyAccountOwner trait
@@ -89,7 +91,7 @@ pub trait ReadonlyAccountOwner {
 
 - [`solana_program::AccountInfo`](https://docs.rs/solana-program/latest/solana_program/account_info/struct.AccountInfo.html)
 - [`solana_sdk::Account`](https://docs.rs/solana-sdk/latest/solana_sdk/account/struct.Account.html)
-- [`KeyedAccount`](crate::sdk::KeyedAccount)
+- blanket for [`Keyed`](crate::keyed::Keyed)
 - blanket for references
 
 ### ReadonlyAccountIsExecutable trait
@@ -105,7 +107,7 @@ pub trait ReadonlyAccountIsExecutable {
 
 - [`solana_program::AccountInfo`](https://docs.rs/solana-program/latest/solana_program/account_info/struct.AccountInfo.html)
 - [`solana_sdk::Account`](https://docs.rs/solana-sdk/latest/solana_sdk/account/struct.Account.html)
-- [`KeyedAccount`](crate::sdk::KeyedAccount)
+- blanket for [`Keyed`](crate::keyed::Keyed)
 - blanket for references
 
 ### ReadonlyAccountRentEpoch trait
@@ -121,7 +123,7 @@ pub trait ReadonlyAccountRentEpoch {
 
 - [`solana_program::AccountInfo`](https://docs.rs/solana-program/latest/solana_program/account_info/struct.AccountInfo.html)
 - [`solana_sdk::Account`](https://docs.rs/solana-sdk/latest/solana_sdk/account/struct.Account.html)
-- [`KeyedAccount`](crate::sdk::KeyedAccount)
+- blanket for [`Keyed`](crate::keyed::Keyed)
 - blanket for references
 
 ## Usage

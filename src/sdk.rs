@@ -3,36 +3,19 @@ use solana_program::{pubkey::Pubkey, stake_history::Epoch};
 use solana_sdk::account::Account;
 
 use crate::{
-    ReadonlyAccountData, ReadonlyAccountIsExecutable, ReadonlyAccountLamports,
-    ReadonlyAccountOwner, ReadonlyAccountPubkey, ReadonlyAccountRentEpoch,
+    keyed::Keyed, ReadonlyAccountData, ReadonlyAccountIsExecutable, ReadonlyAccountLamports,
+    ReadonlyAccountOwner, ReadonlyAccountRentEpoch,
 };
 
 /// Newtype owning reference to account.data in order to work with trait
 #[derive(Clone, Copy, Debug, Deref, DerefMut, AsRef, AsMut, From, Into)]
 pub struct AccountDataRef<'a>(pub &'a [u8]);
 
-/// `solana_sdk::account::Account` with its pubkey
-#[derive(Clone, Debug, Default, PartialEq, Eq)]
-pub struct KeyedAccount {
-    pub pubkey: Pubkey,
-    pub account: Account,
-}
-
-impl ReadonlyAccountPubkey for KeyedAccount {
-    fn pubkey(&self) -> &Pubkey {
-        &self.pubkey
-    }
-}
+pub type KeyedAccount = Keyed<Account>;
 
 impl ReadonlyAccountLamports for Account {
     fn lamports(&self) -> u64 {
         self.lamports
-    }
-}
-
-impl ReadonlyAccountLamports for KeyedAccount {
-    fn lamports(&self) -> u64 {
-        self.account.lamports
     }
 }
 
@@ -45,24 +28,9 @@ impl ReadonlyAccountData for Account {
     }
 }
 
-impl ReadonlyAccountData for KeyedAccount {
-    type SliceDeref<'s> = <solana_sdk::account::Account as ReadonlyAccountData>::SliceDeref<'s>;
-    type DataDeref<'d> = <solana_sdk::account::Account as ReadonlyAccountData>::DataDeref<'d>;
-
-    fn data(&self) -> Self::DataDeref<'_> {
-        self.account.data()
-    }
-}
-
 impl ReadonlyAccountOwner for Account {
     fn owner(&self) -> &Pubkey {
         &self.owner
-    }
-}
-
-impl ReadonlyAccountOwner for KeyedAccount {
-    fn owner(&self) -> &Pubkey {
-        self.account.owner()
     }
 }
 
@@ -72,21 +40,9 @@ impl ReadonlyAccountIsExecutable for Account {
     }
 }
 
-impl ReadonlyAccountIsExecutable for KeyedAccount {
-    fn executable(&self) -> bool {
-        self.account.executable()
-    }
-}
-
 impl ReadonlyAccountRentEpoch for Account {
     fn rent_epoch(&self) -> Epoch {
         self.rent_epoch
-    }
-}
-
-impl ReadonlyAccountRentEpoch for KeyedAccount {
-    fn rent_epoch(&self) -> Epoch {
-        self.account.rent_epoch()
     }
 }
 
