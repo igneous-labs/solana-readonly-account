@@ -1,7 +1,7 @@
 [package]
 name = "solana-readonly-account"
 description = "Readonly solana account field getter traits that work for both on-chain AccountInfos and off-chain Accounts"
-version = "1.1.0"
+version = "2.0.0"
 edition = "2021"
 license = "MIT OR Apache-2.0"
 repository = "https://github.com/igneous-labs/solana-readonly-account.git"
@@ -17,10 +17,9 @@ rustdoc-args = ["--cfg", "docsrs"]
 
 [features]
 default = []
-solana-sdk = ["dep:solana-sdk", "dep:derive_more"]
+solana-sdk = ["dep:solana-sdk"]
 
 [dependencies]
-derive_more = { version = ">=0.99", optional = true, default-features = false, features = ["deref", "deref_mut", "as_ref", "as_mut", "from", "into"] }
 solana-program ="^1"
 solana-sdk = { version = "^1", optional = true }
 

@@ -1,4 +1,3 @@
-use derive_more::{AsMut, AsRef, Deref, DerefMut, From, Into};
 use solana_program::{pubkey::Pubkey, stake_history::Epoch};
 use solana_sdk::account::Account;
 
@@ -6,10 +5,6 @@ use crate::{
     keyed::Keyed, ReadonlyAccountData, ReadonlyAccountIsExecutable, ReadonlyAccountLamports,
     ReadonlyAccountOwner, ReadonlyAccountRentEpoch,
 };
-
-/// Newtype owning reference to account.data in order to work with trait
-#[derive(Clone, Copy, Debug, Deref, DerefMut, AsRef, AsMut, From, Into)]
-pub struct AccountDataRef<'a>(pub &'a [u8]);
 
 pub type KeyedAccount = Keyed<Account>;
 
@@ -20,11 +15,11 @@ impl ReadonlyAccountLamports for Account {
 }
 
 impl ReadonlyAccountData for Account {
-    type SliceDeref<'s> = &'s [u8] where Self: 's;
-    type DataDeref<'d> = AccountDataRef<'d> where Self: 'd;
+    type SliceDeref<'s> = Vec<u8>;
+    type DataDeref<'d> = &'d Vec<u8>;
 
     fn data(&self) -> Self::DataDeref<'_> {
-        AccountDataRef(&self.data)
+        &self.data
     }
 }
 
