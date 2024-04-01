@@ -11,8 +11,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - removed unnecessary newtype `AccountDataRef` for `ReadonlyAccountData` impl for `solana_sdk::account::Account`
 
-### Added
-
 ## [1.1.0]
 
 ### Changed
