@@ -61,7 +61,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_token_acc_serde_roundtrip() {
+    fn test_token_acc_serde_roundtrip_account_info() {
         let acc = gen_test_token_acc();
 
         let mut data = [0u8; Account::LEN];
